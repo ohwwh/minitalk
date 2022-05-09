@@ -40,5 +40,6 @@ int main(void)
 			i ++;
 		}
 		send_char(pid, str[i]);
+		?!
 	}
 }
