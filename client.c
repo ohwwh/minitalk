@@ -14,6 +14,7 @@ int	send_int(int n, int pid)
 	i = 0;
 	while (i < 32)
 	{
+		usleep(100);
 		if ((n & bit))
 			ret = kill(pid, SIGUSR1); //1보내기
 		else
@@ -44,7 +45,7 @@ int	send_char(char c, int pid)
 			ret = kill(pid, SIGUSR2); //0보내기
 		if (ret == -1)
 			return (-1);
-		pause();
+		//pause();
 		c = c << 1;
 		i ++;
 		
@@ -60,7 +61,7 @@ int main(int argc, char *argv[])
 
 	scanf("%d", &pid);
 	i = 0;
-	send_int(6, pid);
+	send_int(27, pid);
 	//00000000000000000000000000000110
 	/*while (str[i])
 	{

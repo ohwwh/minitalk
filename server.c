@@ -12,10 +12,11 @@ global_set gset;
 
 void    get_length(int signum)
 {
-        if (signum == SIGUSR1)
-            gset.length += (1 << gset.pos);
-        printf("%d\n", gset.length);
-        gset.pos ++;
+    long    bit = 0x80000000;
+    if (signum == SIGUSR1)
+        gset.length = gset.length + (bit >> gset.pos);
+    //printf("%d\n", gset.length);
+    gset.pos ++;
 }
 
 int main(void)
@@ -26,9 +27,11 @@ int main(void)
     printf("%d\n", pid);
 	signal(SIGUSR1, get_length);
     signal(SIGUSR2, get_length);
-    pause();
     while (gset.pos < 32)
+    {
         pause();
+        //printf("%d\n", gset.pos);
+    }
 	/*while (1)
 	{
 		if (send_char(pid, str[i]) == -1)
