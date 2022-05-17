@@ -86,15 +86,15 @@ int main(void)
 
 	printf("%d\n", gset.pid);
 	gset.pos = 0;
-	kill(gset.pid, SIGUSR1);
 	signal(SIGUSR1, get_length);
 	signal(SIGUSR2, get_length);
+	kill(gset.pid, SIGUSR1);
 	while (gset.pos < 32)
 	{
 	}
 	printf("%d\n", gset.length);
 	str = (char *)malloc(sizeof(char) * gset.length);
-	while (i < gset.length)
+	/*while (i < gset.length)
 	{
 		signal(SIGUSR1, get_char);
 		signal(SIGUSR2, get_char);
@@ -116,5 +116,15 @@ int main(void)
 	}
 	str[i] = 0;
 	printf("%s\n", str);
-	free(str);
+	free(str);*/
+	gset.pos = 0;
+	signal(SIGUSR1, get_char);
+	signal(SIGUSR2, get_char);
+	usleep(1000);
+	kill(gset.pid, SIGUSR1);
+	while (gset.pos < 8)
+	{
+		printf("%d\n", gset.pos);
+	}
+	printf("%d\n", gset.ch);
 }
