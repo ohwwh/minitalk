@@ -25,13 +25,17 @@ void    get_length(int signum)
 	static int n;
 
 	long    bit = 0x80000000;
-	if (signum == SIGUSR1)
-		gset.length = gset.length + (bit >> gset.pos);
-	gset.pos ++;
-	kill(gset.pid, SIGUSR1);
-	//printf("%d int ack called, pos is %d, length is %d\n", n ++, gset.pos, gset.length);
-	signal(SIGUSR1, get_length);
-	signal(SIGUSR2, get_length);
+
+	if (gset.pos < 32)
+	{
+		if (signum == SIGUSR1) 
+			gset.length = gset.length + (bit >> gset.pos);
+		gset.pos ++;
+		signal(SIGUSR1, get_length);
+		signal(SIGUSR2, get_length);
+		kill(gset.pid, SIGUSR1);
+		printf("%d int ack called, pos is %d, length is %d\n", n ++, gset.pos, gset.length);
+	}
 }
 
 void    get_char(int signum)
@@ -39,14 +43,16 @@ void    get_char(int signum)
 	int	bit = 0x80;
 	static int	n;
 
-	if (signum == SIGUSR1)
-		gset.ch = gset.ch + (bit >> gset.pos);
-	gset.pos ++;
-	//usleep(100);
-	kill(gset.pid, SIGUSR1);
-	signal(SIGUSR1, get_char);
-	signal(SIGUSR2, get_char);
-	printf("%d ack called, pos is %d\n", n ++, gset.pos);
+	if (gset.pos < 8)
+	{
+		if (signum == SIGUSR1)
+			gset.ch = gset.ch + (bit >> gset.pos);
+		gset.pos ++;
+		signal(SIGUSR1, get_char);
+		signal(SIGUSR2, get_char);
+		kill(gset.pid, SIGUSR1);
+		printf("%d ack called, pos is %d\n", n ++, gset.pos);
+	}
 }
 
 void	get_pid_old(int signum)
@@ -93,38 +99,30 @@ int main(void)
 	{
 	}
 	printf("%d\n", gset.length);
-	str = (char *)malloc(sizeof(char) * gset.length);
-	/*while (i < gset.length)
-	{
-		signal(SIGUSR1, get_char);
-		signal(SIGUSR2, get_char);
-		gset.flag = 0;
-		gset.pos = 0;
-		gset.ch = 0;
-		while (!gset.ch)
-			kill(gset.pid, SIGUSR1);
-		//kill(gset.pid, SIGUSR1);
-		while (gset.pos < 8)
-		{
-		}
-		//printf("%c\n", gset.ch);
-		printf("%d\n", i);
-		printf("%c\n", gset.ch);
-		str[i] = gset.ch;
-		printf("%s\n", str);
-		i ++;
-	}
-	str[i] = 0;
-	printf("%s\n", str);
-	free(str);*/
-	gset.pos = 0;
+	//str = (char *)malloc(sizeof(char) * gset.length);
 	signal(SIGUSR1, get_char);
 	signal(SIGUSR2, get_char);
-	usleep(1000);
+	gset.ch = 0;
+	gset.pos = 0;
 	kill(gset.pid, SIGUSR1);
 	while (gset.pos < 8)
 	{
 		printf("%d\n", gset.pos);
 	}
-	printf("%d\n", gset.ch);
+	printf("%c\n", gset.ch);
+	/*while (i < gset.length)
+	{
+		gset.ch = 0;
+		gset.pos = 0;
+		kill(gset.pid, SIGUSR1);
+		while (gset.pos < 8)
+		{
+		}
+		str[i] = gset.ch;
+		printf("%c\n", str[i]);
+		i ++;
+	}
+	str[i] = 0;
+	printf("%s\n", str);
+	free(str);*/
 }

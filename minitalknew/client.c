@@ -8,6 +8,7 @@
 typedef struct global_set {
 	int length;
 	int	ch;
+	int	oc;
 	int pos;
 	int	pid;
 	int	flag;
@@ -51,12 +52,17 @@ void	send_int(int signum)
 	static int	n;
 
 	bit = 0x80000000;
-	if ((gset.length & bit))
-		kill(gset.pid, SIGUSR1); //1보내기
-	else
-		kill(gset.pid, SIGUSR2); //0보내기
-	gset.length = gset.length << 1;
-	gset.pos ++;
+	if (gset.pos < 32)
+	{
+		if ((gset.length & bit))
+			kill(gset.pid, SIGUSR1); //1보내기
+		else
+			kill(gset.pid, SIGUSR2); //0보내기
+		gset.length = gset.length << 1;
+		gset.pos ++;
+		signal(SIGUSR1, send_int);
+		printf("%d int ack called, pos is %d\n", n ++, gset.pos);
+	}
 }
 
 void	send_char(int signum)
@@ -65,12 +71,17 @@ void	send_char(int signum)
 	static int	n;
 
 	bit = 0x80;
-	if ((gset.ch & bit))
-		kill(gset.pid, SIGUSR1); //1보내기
-	else
-		kill(gset.pid, SIGUSR2); //0보내기
-	gset.ch = gset.ch << 1;
-	gset.pos ++;
+	if (gset.pos < 8)
+	{
+		if ((gset.ch & bit))
+			kill(gset.pid, SIGUSR1); //1보내기
+		else
+			kill(gset.pid, SIGUSR2); //0보내기
+		printf("%d char %c ack called, pos is %d\n", n ++, gset.ch ,gset.pos);
+		gset.ch = gset.ch << 1;
+		gset.pos ++;
+		signal(SIGUSR1, send_char);
+	}
 }
 
 int	send_char_old(char c, int pid)
@@ -118,8 +129,19 @@ int main(int argc, char *argv[])
 
 	while (gset.pos < 32){}
 
+
+
 	signal(SIGUSR1, send_char);
 	gset.pos = 0;
-	gset.ch = 'a';
+	gset.ch = str[i];
 	while (gset.pos < 8){}
+	/*while (str[i])
+	{
+		gset.pos = 0;
+		gset.ch = str[i];
+		gset.oc = str[i];
+		//printf("%c\n", str[i]);
+		while (gset.pos < 8){}
+		i ++;
+	}*/
 }
