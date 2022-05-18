@@ -1,2 +1,2 @@
-gcc server.c -o server
-gcc client.c -o client
+gcc server.c -L./libohw -lohw -o server
+gcc client.c -L./libohw -lohw -o client

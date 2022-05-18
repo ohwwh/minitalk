@@ -1,117 +1,80 @@
-#include <signal.h>
-//#include <sys/type.h>
-#include <errno.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
+#include "minitalk.h"
 
-void	well_recieved(int signum)
-{
-	//printf("well received!\n");
-	return ;
-}
+typedef struct global_set {
+	int length;
+	int	it;
+	int	ch;
+	int	oc;
+	int pos;
+	int	state;
+	int	pid;
+	int	flag;
+	char	*str;
+}global_set;
 
-int	send_pid(int n, int pid)
-{
-	long	bit;
-	int	i;
-	int	ret;
+global_set gset;
 
-	bit = 0x80000000;
-	i = 0;
-	while (i < 32)
-	{
-		usleep(1000);
-		if ((n & bit))
-			ret = kill(pid, SIGUSR1); //1보내기
-		else
-			ret = kill(pid, SIGUSR2); //0보내기
-		if (ret == -1)
-			return (-1);
-		n = n << 1;
-		i ++;
-		
-	}
-	return (0);
-}
-
-int	send_int(int n, int pid)
+void	send_whole(int signum, siginfo_t *sip, void *ptr)
 {
 	long	bit;
-	int	i;
-	int	ret;
+	static int	n;
 
-	bit = 0x80000000;
-	i = 0;
-	while (i < 32)
+	int	b = 0;
+	if (gset.state < 32)
 	{
-		if ((n & bit))
-			ret = kill(pid, SIGUSR1); //1보내기
+		bit = 0x80000000;
+		if ((gset.it & bit))
+		{
+			kill(gset.pid, SIGUSR1);
+			b = 1; //1보내기
+		}
 		else
-			ret = kill(pid, SIGUSR2); //0보내기
-		//usleep(1000);
-		pause();
-		if (ret == -1)
-			return (-1);
-		n = n << 1;
-		i ++;
+			kill(gset.pid, SIGUSR2); //0보내기
+		gset.it = gset.it << 1;
+		gset.state ++;
+		//printf("%d int ack called, state is %d, bit is %d\n", n ++, gset.state, b);
 	}
-	return (0);
-}
-
-int	send_char(char c, int pid)
-{
-	int	bit;
-	int	i;
-	int	ret;
-	char	oc;
-
-	oc = c;
-	bit = 0x80;
-	i = 0;
-	while (i < 8)
+	else if (gset.state >= 32 && gset.state < 32 + 8 * (gset.length))
 	{
-		if ((c & bit))
-			ret = kill(pid, SIGUSR1); //1보내기
+		if ((gset.state - 32) % 8 == 0)
+		{
+			gset.ch = gset.str[(gset.state - 32) / 8];
+			//printf("%c\n", gset.str[(gset.state - 32) / 8]);
+		}
+		bit = 0x80;
+		if ((gset.ch & bit))
+		{
+			kill(gset.pid, SIGUSR1);
+			b = 1; //1보내기
+		}
 		else
-			ret = kill(pid, SIGUSR2); //0보내기
-		//usleep(1000);
-		pause();
-		if (ret == -1)
-			return (-1);
-		c = c << 1;
-		i ++;
-		printf("not stop in %d phase of the char %c\n", i, oc);
+			kill(gset.pid, SIGUSR2); //0보내기
+		//printf("%d char %c ack called, state is %d, bit is %d\n", n ++, gset.ch ,gset.state, b);
+		gset.ch = gset.ch << 1;
+		gset.state ++;
 	}
-	return (0);
 }
 
 int main(int argc, char *argv[])
 {
-	char str[100] = "This is random why not working";
-	//char str[100] = "Hello";
 	int	pid = 10;
-	int	i;
+	int	i = 0;
+	struct sigaction act1, oact1;
 
-	signal(SIGUSR1, well_recieved);
+	gset.str = (char *)malloc(ft_strlen(argv[2]) + 1);
+	strcpy(gset.str, argv[2]);
+	gset.pid = ft_atoi(argv[1]);
+	gset.state = 0;
+	gset.length = ft_strlen(gset.str);
+	gset.it = gset.length;
+	act1.sa_flags = SA_SIGINFO;
+	act1.sa_sigaction = &send_whole;
+	sigaction(SIGUSR1, &act1, &oact1);
 	int mypid = getpid();
-	scanf("%d", &pid);
 	i = 0;
-	kill(pid, SIGUSR1);
-	pause();
-	
-	//usleep(1000);
+	kill(gset.pid, SIGUSR1);
 
-
-	printf("not stop in pid\n");
-	send_int(strlen(str), pid);
-	printf("not stop in length\n");
-	while (str[i])
-	{
-		//usleep(1000);
-		pause();
-		send_char(str[i], pid);
-		i ++;
+	while (gset.state < 32 + 8 * (gset.length)){
 	}
-	printf("not stop in char\n");
+	free(gset.str);
 }
