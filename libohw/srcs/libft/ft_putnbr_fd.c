@@ -12,29 +12,12 @@
 
 #include "libft.h"
 
-static void	print(long n, int fd)
-{
-	char	c;
-
-	if (n == 0)
-		return ;
-	print(n / 10, fd);
-	c = n % 10 + '0';
-	write(fd, &c, 1);
-}
-
 void	ft_putnbr_fd(int n, int fd)
 {
-	long	n2;
+	char	*buf;
 
-	n2 = (long)n;
-	if (n2 == 0)
-		write(fd, "0", 1);
-	else if (n2 < 0)
-	{
-		write(fd, "-", 1);
-		print(-n2, fd);
-	}
-	else
-		print(n2, fd);
+	buf = ft_itoa(n);
+	ft_putstr_fd(buf, fd);
+	free(buf);
+	buf = 0;
 }

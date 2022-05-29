@@ -1,89 +1,88 @@
 #include "minitalk.h"
 
-typedef struct global_set {
-	int length;
-	int	ch;
-	int old;
-	int	state;
-	int	pid;
-	char	*str;
-}global_set;
+global_set	g_set;
 
-global_set gset;
+void	kill_fail(void)
+{
+	ft_printf( "kill failed - code: %d\n", errno);
+	free(g_set.str);
+	exit(1);
+}
 
-void	send_again()
+void	send_again(void)
 {
 	int	i;
 
 	i = 0;
 	while (i ++ < 15)
-	{	if (sleep(1))
+	{	
+		if (g_set.k != 0)
+			kill_fail();
+		if (sleep(1))
 			break ;
-		kill(gset.pid, gset.old);
+		g_set.k = kill(g_set.pid, g_set.old);
 		write(1, "Transmission is delayed......\n", 30);
 	}
-	if (i == 15)
+	if (i > 15)
 	{
 		write(1, "Transmission is delayed too much. Send the message again plz\n", 61);
-		free(gset.str);
+		free(g_set.str);
 		exit(-1);
 	}
-		
 }
 
 void	send_whole(int signum, siginfo_t *sip, void *ptr)
 {
-	long	bit;
-	static int	i;
+	long		bit;
+	char		b = '0';
 
-	char	b = '0';
-
-	if (gset.state < 8 * (gset.length + 1))
+	if (g_set.state < 8 * (g_set.length + 1))
 	{
-		if ((gset.state) % 8 == 0)
+		if ((g_set.state) % 8 == 0)
 		{
-			gset.ch = gset.str[gset.state / 8];
+			g_set.ch = g_set.str[g_set.state / 8];
 		}
 		bit = 0x80;
-		if ((gset.ch & bit))
+		if ((g_set.ch & bit))
 		{
-			gset.old = SIGUSR1;
+			g_set.old = SIGUSR1;
 			b = '1';//1보내기
 		}
 		else
-			gset.old = SIGUSR2; //0보내기
+			g_set.old = SIGUSR2; //0보내기
 		/*write(1, &b, 1);
 		write(1, "\n", 1);*/
-		gset.ch = gset.ch << 1;
-		gset.state ++;
-		kill(gset.pid, gset.old);
+		g_set.ch = g_set.ch << 1;
+		g_set.state ++;
+		g_set.k = kill(g_set.pid, g_set.old);
+		if (g_set.state == 8 * (g_set.length + 1))
+			exit(0);
 	}
 }
 
-
-
-int main(int argc, char *argv[])
+int	main(int argc, char *argv[])
 {
-	int	pid = 10;
-	struct sigaction act1, act2;
+	struct sigaction	act1;
 
-	gset.str = (char *)malloc(ft_strlen(argv[2]) + 1);
-	strcpy(gset.str, argv[2]);
-	gset.pid = ft_atoi(argv[1]);
-	gset.state = 0;
-	gset.length = ft_strlen(gset.str);
-	gset.old = SIGUSR1;
+	if (argc != 3)
+	{
+		ft_putstr_fd("wrong!!", 1);
+		return (-1);
+	}
+	g_set.str = (char *)malloc(ft_strlen(argv[2]) + 1);
+	strcpy(g_set.str, argv[2]);
+	g_set.pid = ft_atoi(argv[1]);
+	g_set.state = 0;
+	g_set.length = ft_strlen(g_set.str);
+	g_set.old = SIGUSR1;
 	act1.sa_flags = SA_NODEFER | SA_SIGINFO;
 	act1.sa_sigaction = &send_whole;
 	sigaction(SIGUSR1, &act1, 0);
 	sigaction(SIGUSR2, &act1, 0);
-	int mypid = getpid();
-	printf("%d\n", mypid);
-	kill(gset.pid, gset.old);
-	send_again();
-	while (gset.state < 8 * (gset.length + 1))
+	g_set.k = kill(g_set.pid, g_set.old);
+	while (g_set.state < 8 * (g_set.length + 1))
 	{
 		send_again();
 	}
-	free(gset.str);
+	free(g_set.str);
 }

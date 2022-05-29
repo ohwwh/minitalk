@@ -1,23 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putnbr_base_fd.c                                :+:      :+:    :+:   */
+/*   ft_checkdigit_address.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ohw <ohw@student.42seoul.kr>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/20 17:22:26 by ohw               #+#    #+#             */
-/*   Updated: 2022/01/06 14:37:22 by ohw              ###   ########.fr       */
+/*   Created: 2022/01/06 14:45:22 by ohw               #+#    #+#             */
+/*   Updated: 2022/01/08 14:52:15 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	ft_putnbr_base_fd(long n, int base, int capital, int fd)
+static int	check(unsigned long n, int digit)
 {
-	char	*buf;
+	if (n == 0)
+		return (digit);
+	return (check(n / 16, digit + 1));
+}
 
-	buf = ft_itoa_base(n, base, capital);
-	ft_putstr_fd(buf, fd);
-	free(buf);
-	buf = 0;
+int	ft_checkdigit_address(void *p)
+{
+	unsigned long	n;
+
+	n = (unsigned long)p;
+	if (!n)
+		return (1);
+	else
+		return (check(n, 0));
 }
