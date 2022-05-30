@@ -8,13 +8,13 @@
 #include "libohw/includes/ft_printf.h"
 
 typedef struct global_set {
-	volatile int	length;
+	volatile int			length;
 	volatile sig_atomic_t	state;
-	char			*str;
 	volatile sig_atomic_t	ch;
-	int 			old;
-	int				pid;
-	int				k;
-	int				oldch;
-	int				erno;
+	char					*str;
+	int 					old;
+	int						pid;
+	int						k;
+	int						oldch;
+	int						erno;
 }global_set;

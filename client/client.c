@@ -1,6 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hoh <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/30 22:07:10 by hoh               #+#    #+#             */
+/*   Updated: 2022/05/30 22:07:12 by hoh              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minitalk.h"
 
 global_set	g_set;
+
+static int	isdigit_string(char *str)
+{
+	while (*str)
+	{
+		if (0 + '0' > *str | 9 + '0' < *str)
+			return (0);
+		str ++;
+	}
+	return (1);
+}
 
 static void	kill_fail(void)
 {
@@ -35,6 +58,9 @@ void	send_whole(int signum, siginfo_t *sip, void *ptr)
 {
 	long		bit;
 
+	signum = 1;
+	ptr = 0;
+	sip = 0;
 	if (g_set.state < 8 * (g_set.length + 1))
 	{
 		if ((g_set.state) % 8 == 0)
@@ -57,7 +83,7 @@ int	main(int argc, char *argv[])
 {
 	struct sigaction	act1;
 
-	if (argc != 3)
+	if ((argc != 3) | (!isdigit_string(argv[1])))
 	{
 		ft_printf("Invalid arguments\n");
 		return (-1);

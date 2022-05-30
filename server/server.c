@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hoh <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/05/30 22:07:21 by hoh               #+#    #+#             */
+/*   Updated: 2022/05/30 22:07:22 by hoh              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minitalk.h"
 
 global_set	g_set;
@@ -49,8 +61,8 @@ static void	get_again(void)
 void	get_whole(int signum, siginfo_t *sip, void *ptr)
 {
 	int	bit;
-	int	old;
 
+	ptr = 0;
 	if (g_set.state == -2)
 		return ;
 	if (g_set.state == -1)
@@ -60,10 +72,10 @@ void	get_whole(int signum, siginfo_t *sip, void *ptr)
 	}
 	else if (g_set.pid == sip->si_pid)
 	{
-		g_set.oldch = g_set.ch;
 		bit = 0x80;
-		g_set.ch <<= 1;
-		g_set.ch += (signum == SIGUSR1);
+		g_set.ch *= 2;
+		if (signum == SIGUSR1)
+		g_set.ch += 1;
 	}
 	g_set.state ++;
 	if (g_set.state == 8)
