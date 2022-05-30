@@ -9,9 +9,9 @@
 
 typedef struct global_set {
 	volatile int	length;
-	volatile int	state;
+	volatile sig_atomic_t	state;
 	char			*str;
-	int				ch;
+	volatile sig_atomic_t	ch;
 	int 			old;
 	int				pid;
 	int				k;
