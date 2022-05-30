@@ -16,4 +16,5 @@ typedef struct global_set {
 	int				pid;
 	int				k;
 	int				oldch;
+	int				erno;
 }global_set;

@@ -4,7 +4,7 @@ global_set	g_set;
 
 static void	kill_fail(void)
 {
-	ft_printf("kill failed - code: %d\n", errno);
+	ft_printf("kill failed - code: %d\n", g_set.erno);
 	free(g_set.str);
 	exit(1);
 }
@@ -49,6 +49,7 @@ void	send_whole(int signum, siginfo_t *sip, void *ptr)
 		g_set.ch = g_set.ch << 1;
 		g_set.state ++;
 		g_set.k = kill(g_set.pid, g_set.old);
+		g_set.erno = errno;
 	}
 }
 
@@ -72,9 +73,10 @@ int	main(int argc, char *argv[])
 	sigaction(SIGUSR1, &act1, 0);
 	sigaction(SIGUSR2, &act1, 0);
 	g_set.k = kill(g_set.pid, g_set.old);
+	g_set.erno = errno;
 	while (g_set.state < 8 * (g_set.length + 1))
 	{
-		if (!usleep(1000000))
+		if (!usleep(999999))
 			send_again();
 	}
 	free(g_set.str);

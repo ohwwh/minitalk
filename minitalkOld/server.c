@@ -2,6 +2,113 @@
 
 global_set	g_set;
 
+void	check(int signum)
+{
+	if (g_set.state == 1 && signum != SIGUSR2)
+		write(1, "\nwrong!\n", 8);
+	else if (g_set.state == 2 && signum != SIGUSR1)
+		write(1, "\nwrong!\n", 8);
+	else if (g_set.state == 3 && signum != SIGUSR1)
+		write(1, "\nwrong!\n", 8);
+	else if (g_set.state == 4 && signum != SIGUSR2)
+		write(1, "\nwrong!\n", 8);
+	else if (g_set.state == 5 && signum != SIGUSR2)
+		write(1, "\nwrong!\n", 8);
+	else if (g_set.state == 6 && signum != SIGUSR2)
+		write(1, "\nwrong!\n", 8);
+	else if (g_set.state == 7 && signum != SIGUSR2)
+		write(1, "\nwrong!\n", 8);
+	else if (g_set.state == 8 && signum != SIGUSR1)
+		write(1, "\nwrong!\n", 8);
+
+}
+
+/*void	check_ch(void)
+{
+	int	bit = 0x80;
+
+	//write(1, "\n", 1);
+	if (g_set.state == 1 && g_set.ch != 0)
+	{
+		printf("\n%d += %d", 0, 0);
+		printf("\n%d += (%d >> %d = %d) = %d\n", g_set.oldch, bit, g_set.state - 1, bit >> (g_set.state - 1), g_set.ch);
+	}
+	else if (g_set.state == 2 && g_set.ch != 64)
+	{
+		printf("\n%d += (%d >> %d = %d)", 0, bit, 1, bit >> 1);
+		 printf("\n%d += (%d >> %d = %d) = %d\n", g_set.oldch, bit, g_set.state - 1, bit >> (g_set.state - 1), g_set.ch);
+	}
+	else if (g_set.state == 3 && g_set.ch != 96)
+	{
+		  printf("\n%d += (%d >> %d = %d)", 64, bit, 2, bit >> 2);
+		 printf("\n%d += (%d >> %d = %d) = %d\n", g_set.oldch, bit, g_set.state - 1, bit >> (g_set.state - 1), g_set.ch);
+	}
+	else if (g_set.state == 4 && g_set.ch != 96)
+	{
+		  printf("\n%d += %d", 96, 0);
+		 printf("\n%d += (%d >> %d = %d) = %d\n", g_set.oldch, bit, g_set.state - 1, bit >> (g_set.state - 1), g_set.ch);
+	}
+	else if (g_set.state == 5 && g_set.ch != 96)
+	{
+		 printf("\n%d += %d", 96, 0);
+		 printf("\n%d += (%d >> %d = %d) = %d\n", g_set.oldch, bit, g_set.state - 1, bit >> (g_set.state - 1), g_set.ch);
+	}
+	else if (g_set.state == 6 && g_set.ch != 96)
+	{
+		  printf("\n%d += %d", 96, 0);
+		 printf("\n%d += (%d >> %d = %d) = %d\n", g_set.oldch, bit, g_set.state - 1, bit >> (g_set.state - 1), g_set.ch);
+	}
+	else if (g_set.state == 7 && g_set.ch != 96)
+	{
+		 printf("\n%d += %d", 96, 0);
+		 printf("\n%d += (%d >> %d = %d) = %d\n", g_set.oldch, bit, g_set.state - 1, bit >> (g_set.state - 1), g_set.ch);
+	}
+	else if (g_set.state == 8 && g_set.ch != 97)
+	{
+		 printf("\n%d += (%d >> %d = %d)", 96, bit, 7, bit >> 7);
+		 printf("\n%d += (%d >> %d = %d) = %d\n", g_set.oldch, bit, g_set.state - 1, bit >> (g_set.state - 1), g_set.ch);
+	}
+}*/
+
+/*void	check_ch(void)
+{
+	int	bit = 0x80;
+
+	//write(1, "\n", 1);
+	if (g_set.state == 1 && g_set.ch != 0)
+	{
+		printf("\nexpected = %d, result = %d\n", 0, g_set.ch);
+	}
+	else if (g_set.state == 2 && g_set.ch != 64)
+	{
+		printf("\nexpected = %d, result = %d\n", 64, g_set.ch);
+	}
+	else if (g_set.state == 3 && g_set.ch != 96)
+	{
+		printf("\nexpected = %d, result = %d\n", 96, g_set.ch);
+	}
+	else if (g_set.state == 4 && g_set.ch != 96)
+	{
+		printf("\nexpected = %d, result = %d\n", 96, g_set.ch);
+	}
+	else if (g_set.state == 5 && g_set.ch != 96)
+	{
+		printf("\nexpected = %d, result = %d\n", 96, g_set.ch);
+	}
+	else if (g_set.state == 6 && g_set.ch != 96)
+	{
+		  printf("\nexpected = %d, result = %d\n", 96, g_set.ch);
+	}
+	else if (g_set.state == 7 && g_set.ch != 96)
+	{
+		 printf("\nexpected = %d, result = %d\n", 96, g_set.ch);
+	}
+	else if (g_set.state == 8 && g_set.ch != 97)
+	{
+		printf("\nexpected = %d, result = %d\n", 97, g_set.ch);
+	}
+}*/
+
 static void	kill_fail(void)
 {
 	ft_printf("kill failed - code: %d\n", errno);
@@ -10,7 +117,9 @@ static void	kill_fail(void)
 
 static void	char_process(void)
 {
-	write(1, &g_set.ch, 1);
+	const char	c = g_set.ch;
+
+	write(1, &c, 1);
 	if (g_set.ch == '\0')
 		g_set.state = -2;
 	else
@@ -25,28 +134,29 @@ static void	get_again(void)
 	int	i;
 
 	i = 0;
-	while (i ++ < 15)
+	while (i ++ < 5)
 	{	
 		if (g_set.k != 0)
 		{
 			kill_fail();
 			return ;
 		}
-		if (sleep(1))
+		if (usleep(1000000))
 			break ;
 		g_set.k = kill(g_set.pid, g_set.old);
 		write(1, "\nTransmission is delayed......\n", 31);
 	}
-	if (i == 15)
+	if (i == 5)
 	{
 		write(1, "\nTransmission is delayed too much. FAIL\n", 40);
 		g_set.state = -2;
 	}
 }
 
-static void	get_whole(int signum, siginfo_t *sip, void *ptr)
+void	get_whole(int signum, siginfo_t *sip, void *ptr)
 {
-	long	bit;
+	int	bit;
+	int	old;
 
 	if (g_set.state == -2)
 		return ;
@@ -57,9 +167,10 @@ static void	get_whole(int signum, siginfo_t *sip, void *ptr)
 	}
 	else if (g_set.pid == sip->si_pid)
 	{
+		g_set.oldch = g_set.ch;
 		bit = 0x80;
-		if (signum == SIGUSR1)
-			g_set.ch = g_set.ch + (bit >> g_set.state);
+		g_set.ch <<= 1;
+		g_set.ch += (signum == SIGUSR1);
 	}
 	g_set.state ++;
 	if (g_set.state == 8)
@@ -86,10 +197,8 @@ int	main(void)
 		pause();
 		while (g_set.state != -2)
 		{
-			if (g_set.k != 0)
-			{
-				kill_fail();
-			}
+			if (!usleep(1000000))
+				get_again();
 		}
 		write(1, "\n", 1);
 	}

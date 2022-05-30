@@ -9,21 +9,21 @@ static void	kill_fail(void)
 	exit(1);
 }
 
-static void	send_again(void)
+void	send_again(void)
 {
 	int	i;
 
 	i = 0;
-	while (i ++ < 15)
+	while (i ++ < 5)
 	{	
 		if (g_set.k != 0)
 			kill_fail();
-		if (sleep(1))
+		if (usleep(1000000))
 			break ;
 		g_set.k = kill(g_set.pid, g_set.old);
 		write(1, "Transmission is delayed......\n", 30);
 	}
-	if (i > 15)
+	if (i == 5)
 	{
 		write(1, "Transmission is delayed. Send the message again plz\n", 61);
 		free(g_set.str);
@@ -31,7 +31,7 @@ static void	send_again(void)
 	}
 }
 
-static void	send_whole(int signum, siginfo_t *sip, void *ptr)
+void	send_whole(int signum, siginfo_t *sip, void *ptr)
 {
 	long		bit;
 
@@ -49,8 +49,6 @@ static void	send_whole(int signum, siginfo_t *sip, void *ptr)
 		g_set.ch = g_set.ch << 1;
 		g_set.state ++;
 		g_set.k = kill(g_set.pid, g_set.old);
-		/*if (g_set.state == 8 * (g_set.length + 1))
-			exit(0); //이건 왜...?*/
 	}
 }
 
@@ -76,7 +74,8 @@ int	main(int argc, char *argv[])
 	g_set.k = kill(g_set.pid, g_set.old);
 	while (g_set.state < 8 * (g_set.length + 1))
 	{
-		send_again();
+		if (!usleep(1000000))
+			send_again();
 	}
 	free(g_set.str);
 }
