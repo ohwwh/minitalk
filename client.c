@@ -4,7 +4,7 @@ global_set	g_set;
 
 void	kill_fail(void)
 {
-	ft_printf( "kill failed - code: %d\n", errno);
+	ft_printf("kill failed - code: %d\n", errno);
 	free(g_set.str);
 	exit(1);
 }
@@ -25,7 +25,7 @@ void	send_again(void)
 	}
 	if (i > 15)
 	{
-		write(1, "Transmission is delayed too much. Send the message again plz\n", 61);
+		write(1, "Transmission is delayed. Send the message again plz\n", 61);
 		free(g_set.str);
 		exit(-1);
 	}
@@ -34,7 +34,6 @@ void	send_again(void)
 void	send_whole(int signum, siginfo_t *sip, void *ptr)
 {
 	long		bit;
-	char		b = '0';
 
 	if (g_set.state < 8 * (g_set.length + 1))
 	{
@@ -44,19 +43,14 @@ void	send_whole(int signum, siginfo_t *sip, void *ptr)
 		}
 		bit = 0x80;
 		if ((g_set.ch & bit))
-		{
 			g_set.old = SIGUSR1;
-			b = '1';//1보내기
-		}
 		else
-			g_set.old = SIGUSR2; //0보내기
-		/*write(1, &b, 1);
-		write(1, "\n", 1);*/
+			g_set.old = SIGUSR2;
 		g_set.ch = g_set.ch << 1;
 		g_set.state ++;
 		g_set.k = kill(g_set.pid, g_set.old);
-		if (g_set.state == 8 * (g_set.length + 1))
-			exit(0);
+		/*if (g_set.state == 8 * (g_set.length + 1))
+			exit(0); //이건 왜...?*/
 	}
 }
 
@@ -66,7 +60,7 @@ int	main(int argc, char *argv[])
 
 	if (argc != 3)
 	{
-		ft_putstr_fd("wrong!!", 1);
+		ft_printf("Invalid arguments\n");
 		return (-1);
 	}
 	g_set.str = (char *)malloc(ft_strlen(argv[2]) + 1);
