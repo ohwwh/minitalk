@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static int print_c(char c)
+static int	print_c(char c)
 {
 	int	ret;
 
@@ -21,9 +21,9 @@ static int print_c(char c)
 	return (ret);
 }
 
-static int print_s(char *s)
+static int	print_s(char *s)
 {
-	int ret;
+	int	ret;
 
 	if (!s)
 		ret = 6;
@@ -33,9 +33,9 @@ static int print_s(char *s)
 	return (ret);
 }
 
-static int print_p(void *p)
+static int	print_p(void *p)
 {
-	int ret;
+	int	ret;
 
 	ret = ft_checkdigit_address(p);
 	ret += 2;
@@ -53,6 +53,6 @@ int	non_nbr(va_list *app, const char **fmt)
 		ret = print_s(va_arg(*app, char *));
 	else
 		ret = print_p(va_arg(*app, void *));
-	(*fmt) ++;
+	(*fmt)++;
 	return (ret);
 }

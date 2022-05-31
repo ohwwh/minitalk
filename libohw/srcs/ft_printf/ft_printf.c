@@ -18,7 +18,7 @@ extern int	non_nbr(va_list *app, const char **fmt);
 int	ft_printf(const char *f, ...)
 {
 	va_list	ap;
-    int		ret;
+	int		ret;
 
 	va_start(ap, f);
 	ret = 0;

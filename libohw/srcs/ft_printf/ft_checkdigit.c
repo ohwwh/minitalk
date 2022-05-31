@@ -12,14 +12,14 @@
 
 #include "ft_printf.h"
 
-static int check(long nbr, int bs, int digit)
+static int	check(long nbr, int bs, int digit)
 {
 	if (nbr == 0)
 		return (digit);
 	return (check(nbr / bs, bs, digit + 1));
 }
 
-int ft_checkdigit(long nbr, int bs)
+int	ft_checkdigit(long nbr, int bs)
 {
 	if (!nbr)
 		return (1);

@@ -30,17 +30,12 @@ static int	getbuf(int n, int base)
 	return (buf);
 }
 
-char	*ft_itoa_base(int n, int base, int capital)
+static char	*body(long temp, int base, int capital)
 {
 	int		buf;
-	long	temp;
 	char	*ret;
 
-	if (n >= 0)
-		temp = n;
-	else
-		temp = -(long)n;
-	ret = (char *)malloc(sizeof(char) * (buf = getbuf(n, base)));
+	ret = (char *)malloc(sizeof(char) * (buf = getbuf(temp, base)));
 	if (ret)
 	{
 		ret[(buf--) - 1] = 0;
@@ -54,10 +49,26 @@ char	*ft_itoa_base(int n, int base, int capital)
 				ret[(buf--) - 1] = temp % base + '0';
 			temp /= base;
 		}
+	}
+	return (ret);
+}
+
+char	*ft_itoa_base(int n, int base, int capital)
+{
+	long	temp;
+	char	*ret;
+
+	if (n >= 0)
+		temp = n;
+	else
+		temp = -(long)n;
+	ret = body(temp, base, capital);
+	if (ret)
+	{
 		if (n < 0)
-			ret[buf - 1] = '-';
+			ret[0] = '-';
 		else if (n == 0)
-			ret[buf - 1] = '0';
+			ret[0] = '0';
 	}
 	return (ret);
 }

@@ -12,9 +12,9 @@
 
 #include "ft_printf.h"
 
-static int print_di(long nbr)
+static int	print_di(long nbr)
 {
-	int ret;
+	int	ret;
 
 	ret = ft_checkdigit(nbr, 10);
 	if (nbr < 0)
@@ -23,31 +23,31 @@ static int print_di(long nbr)
 	return (ret);
 }
 
-static int print_u(long nbr)
+static int	print_u(long nbr)
 {
-	int ret;
+	int	ret;
 
 	ret = ft_checkdigit(nbr, 10);
 	ft_putnbr_base_fd(nbr, 10, 0, 1);
 	return (ret);
 }
 
-static int print_x(long nbr)
+static int	print_x(long nbr)
 {
-	int ret;
+	int	ret;
 
 	ret = ft_checkdigit(nbr, 16);
 	ft_putnbr_base_fd(nbr, 16, 0, 1);
 	return (ret);
 }
 
-static int print_upper_x(long nbr)
+static int	print_upper_x(long nbr)
 {
-    int ret;
+	int	ret;
 
-    ret = ft_checkdigit(nbr, 16);
-    ft_putnbr_base_fd(nbr, 16, 1, 1);
-    return (ret);
+	ret = ft_checkdigit(nbr, 16);
+	ft_putnbr_base_fd(nbr, 16, 1, 1);
+	return (ret);
 }
 
 int	nbr(va_list *app, const char **fmt)
@@ -62,6 +62,6 @@ int	nbr(va_list *app, const char **fmt)
 		ret = print_x((long)(va_arg(*app, unsigned int)));
 	else
 		ret = print_upper_x((long)(va_arg(*app, unsigned int)));
-	(*fmt) ++;
+	(*fmt)++;
 	return (ret);
 }

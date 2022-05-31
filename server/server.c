@@ -12,7 +12,7 @@
 
 #include "minitalk.h"
 
-global_set	g_set;
+t_global_set	g_set;
 
 static void	kill_fail(void)
 {
@@ -49,6 +49,7 @@ static void	get_again(void)
 		if (usleep(1000000))
 			break ;
 		g_set.k = kill(g_set.pid, g_set.old);
+		g_set.erno = errno;
 		write(1, "\nTransmission is delayed......\n", 31);
 	}
 	if (i == 5)
@@ -70,7 +71,7 @@ void	get_whole(int signum, siginfo_t *sip, void *ptr)
 		g_set.pid = sip->si_pid;
 		ft_printf("[Client %d]: ", g_set.pid);
 	}
-	else if (g_set.pid == sip->si_pid)
+	else if (g_set.pid == sip->si_pid) //pid = 0 swapper mac os 에서만, 
 	{
 		bit = 0x80;
 		g_set.ch *= 2;
@@ -87,7 +88,7 @@ void	get_whole(int signum, siginfo_t *sip, void *ptr)
 int	main(void)
 {
 	const int			pid = getpid();
-	struct sigaction	act1;
+	struct sigaction	act;
 
 	ft_printf("[Server PID: %d]\n", pid);
 	while (1)
@@ -96,11 +97,11 @@ int	main(void)
 		g_set.ch = 0;
 		g_set.old = SIGUSR1;
 		g_set.state = -1;
-		act1.sa_flags = SA_NODEFER | SA_SIGINFO | SA_RESTART;
-		//act1.sa_flags = SA_SIGINFO | SA_RESTART;
-		act1.sa_sigaction = &get_whole;
-		sigaction(SIGUSR1, &act1, NULL);
-		sigaction(SIGUSR2, &act1, NULL);
+		sigemptyset(&act.sa_mask);
+		act.sa_flags = SA_SIGINFO | SA_NODEFER;
+		act.sa_sigaction = &get_whole;
+		sigaction(SIGUSR1, &act, NULL);
+		sigaction(SIGUSR2, &act, NULL);
 		pause();
 		while (g_set.state != -2)
 		{
