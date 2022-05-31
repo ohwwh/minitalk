@@ -74,7 +74,7 @@ void	get_whole(int signum, siginfo_t *sip, void *ptr)
 	else if (g_set.pid == sip->si_pid) //pid = 0 swapper mac os 에서만, 
 	{
 		bit = 0x80;
-		g_set.ch *= 2;
+		g_set.ch <<= 1;
 		if (signum == SIGUSR1)
 		g_set.ch += 1;
 	}
