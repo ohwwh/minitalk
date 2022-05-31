@@ -96,7 +96,8 @@ int	main(void)
 		g_set.ch = 0;
 		g_set.old = SIGUSR1;
 		g_set.state = -1;
-		act1.sa_flags = SA_NODEFER | SA_SIGINFO;
+		act1.sa_flags = SA_NODEFER | SA_SIGINFO | SA_RESTART;
+		//act1.sa_flags = SA_SIGINFO | SA_RESTART;
 		act1.sa_sigaction = &get_whole;
 		sigaction(SIGUSR1, &act1, NULL);
 		sigaction(SIGUSR2, &act1, NULL);
