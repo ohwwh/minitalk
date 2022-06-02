@@ -12,7 +12,7 @@
 
 #include "minitalk.h"
 
-t_global_set	g_set;
+volatile t_global_set	g_set;
 
 static void	kill_fail(void)
 {
@@ -71,7 +71,7 @@ void	get_whole(int signum, siginfo_t *sip, void *ptr)
 		g_set.pid = sip->si_pid;
 		ft_printf("[Client %d]: ", g_set.pid);
 	}
-	else if (g_set.pid == sip->si_pid) //pid = 0 swapper mac os 에서만, 
+	else if (g_set.pid == sip->si_pid)
 	{
 		bit = 0x80;
 		g_set.ch <<= 1;

@@ -12,7 +12,7 @@
 
 #include "minitalk.h"
 
-t_global_set	g_set;
+volatile t_global_set	g_set;
 
 static int	isdigit_string(char *str)
 {

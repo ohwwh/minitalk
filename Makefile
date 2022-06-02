@@ -24,8 +24,8 @@ all :
 
 bonus : 
 	make -C $(LIBDIR)
-	make -C $(CNTDIR)
-	make -C $(SVRDIR)
+	make -C $(CNTDIR) bonus
+	make -C $(SVRDIR) bonus
 
 clean:
 	make -C $(LIBDIR) clean
