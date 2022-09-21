@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hoh <marvin@42.fr>                         +#+  +:+       +#+        */
+/*   By: hoh <hoh@student.42.kr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 22:07:10 by hoh               #+#    #+#             */
-/*   Updated: 2022/05/30 22:07:12 by hoh              ###   ########.fr       */
+/*   Updated: 2022/09/21 15:43:19 by hoh              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+#include <stdio.h>
 
-volatile t_global_set	g_set;
+//volatile t_global_set	g_set;
+t_global_set	g_set;
 
 static int	isdigit_string(char *str)
 {
