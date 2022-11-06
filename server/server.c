@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hoh <hoh@student.42.kr>                    +#+  +:+       +#+        */
+/*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 22:07:21 by hoh               #+#    #+#             */
-/*   Updated: 2022/09/21 15:34:41 by hoh              ###   ########.fr       */
+/*   Updated: 2022/11/05 23:47:25 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,7 @@ static void	get_again(void)
 
 void	get_whole(int signum, siginfo_t *sip, void *ptr)
 {
-	int	bit;
-
-	ptr = 0;
+	ptr = (void *)ptr;
 	if (g_set.state == -34)
 		return ;
 	if (g_set.state == -33)
@@ -76,7 +74,6 @@ void	get_whole(int signum, siginfo_t *sip, void *ptr)
 	}
 	else if (g_set.pid == sip->si_pid && g_set.state < 0)
 	{
-		bit = 0x80000000;
 		g_set.length <<= 1;
 		if (signum == SIGUSR1)
 			g_set.length += 1;
@@ -92,7 +89,6 @@ void	get_whole(int signum, siginfo_t *sip, void *ptr)
 	}
 	else if (g_set.pid == sip->si_pid && g_set.state >= 0)
 	{
-		bit = 0x80;
 		g_set.ch <<= 1;
 		if (signum == SIGUSR1)
 			g_set.ch += 1;

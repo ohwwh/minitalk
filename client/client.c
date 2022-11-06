@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hoh <hoh@student.42.kr>                    +#+  +:+       +#+        */
+/*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/30 22:07:10 by hoh               #+#    #+#             */
-/*   Updated: 2022/09/21 15:43:19 by hoh              ###   ########.fr       */
+/*   Updated: 2022/11/05 23:49:46 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,10 @@ void	send_whole(int signum, siginfo_t *sip, void *ptr)
 {
 	long		bit;
 
-	signum = 1;
-	ptr = 0;
-	sip = 0;
+	if (signum != SIGUSR1 && signum != SIGUSR2)
+		return ;
+	ptr = (void *)sip;
+	sip = (void *)ptr;
 	if (g_set.state < 0)
 	{
 		bit = 0x80000000;
